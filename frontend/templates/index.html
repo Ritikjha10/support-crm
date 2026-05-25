@@ -1,676 +1,1141 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SupportDesk — CRM</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+  <title>SupportDesk CRM</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Syne:wght@400;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Syne:wght@400;600;700;800&family=Inter:wght@300;400;500;600&display=swap"
+    rel="stylesheet">
   <style>
     :root {
       --bg: #0d0f14;
       --surface: #141720;
       --border: #252a38;
       --accent: #4f8ef7;
-      --accent2: #f7c94f;
       --danger: #f74f6a;
       --success: #4ff7a0;
       --warn: #f7944f;
       --text: #e8eaf0;
       --muted: #6b7280;
     }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
     body {
       background: var(--bg);
       color: var(--text);
       font-family: 'Inter', sans-serif;
       min-height: 100vh;
     }
-    h1, h2, h3, .display { font-family: 'Syne', sans-serif; }
-    .mono { font-family: 'IBM Plex Mono', monospace; }
 
-    /* Sidebar */
+    h1,
+    h2,
+    h3 {
+      font-family: 'Syne', sans-serif;
+    }
+
     #sidebar {
-      position: fixed; top: 0; left: 0; bottom: 0; width: 220px;
+      position: fixed;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      width: 220px;
       background: var(--surface);
       border-right: 1px solid var(--border);
-      display: flex; flex-direction: column;
+      display: flex;
+      flex-direction: column;
       z-index: 100;
     }
+
     .logo {
       padding: 24px 20px 20px;
       font-family: 'Syne', sans-serif;
-      font-size: 18px; font-weight: 800;
-      letter-spacing: -0.5px;
+      font-size: 18px;
+      font-weight: 800;
       border-bottom: 1px solid var(--border);
     }
-    .logo span { color: var(--accent); }
-    nav { padding: 16px 12px; flex: 1; }
+
+    .logo span {
+      color: var(--accent);
+    }
+
+    nav {
+      padding: 16px 12px;
+      flex: 1;
+    }
+
     nav a {
-      display: flex; align-items: center; gap: 10px;
-      padding: 10px 12px; border-radius: 8px;
-      color: var(--muted); font-size: 14px; font-weight: 500;
-      cursor: pointer; transition: all .15s; text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      text-decoration: none;
       margin-bottom: 4px;
     }
-    nav a:hover { background: rgba(79,142,247,.08); color: var(--text); }
-    nav a.active { background: rgba(79,142,247,.15); color: var(--accent); }
-    nav a svg { width: 16px; height: 16px; flex-shrink: 0; }
 
-    /* Stats pills in sidebar */
-    .stat-pill {
-      margin: 0 12px; margin-bottom: 6px; padding: 10px 14px;
-      border-radius: 8px; border: 1px solid var(--border);
-      display: flex; justify-content: space-between; align-items: center;
-      font-size: 12px; color: var(--muted);
+    nav a:hover {
+      background: rgba(79, 142, 247, .08);
+      color: var(--text);
     }
-    .stat-pill .num { font-family: 'IBM Plex Mono', monospace; font-size: 16px; font-weight: 500; color: var(--text); }
 
-    /* Main */
-    #main { margin-left: 220px; min-height: 100vh; }
+    nav a.active {
+      background: rgba(79, 142, 247, .15);
+      color: var(--accent);
+    }
+
+    .sidebar-stats {
+      padding-bottom: 16px;
+    }
+
+    .stat-pill {
+      margin: 0 12px;
+      margin-bottom: 6px;
+      padding: 10px 14px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    #main {
+      margin-left: 220px;
+      min-height: 100vh;
+    }
+
     header {
       padding: 20px 32px;
       border-bottom: 1px solid var(--border);
-      display: flex; align-items: center; gap: 16px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
       background: var(--bg);
-      position: sticky; top: 0; z-index: 50;
+      position: sticky;
+      top: 0;
+      z-index: 50;
     }
+
     #search-input {
-      flex: 1; max-width: 400px;
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: 8px; padding: 9px 14px 9px 38px;
-      color: var(--text); font-size: 14px; outline: none;
-      transition: border-color .15s;
+      flex: 1;
+      max-width: 400px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 9px 14px 9px 38px;
+      color: var(--text);
+      font-size: 14px;
+      outline: none;
     }
-    #search-input:focus { border-color: var(--accent); }
-    .search-wrap { position: relative; }
-    .search-wrap svg { position: absolute; left: 11px; top: 50%; transform: translateY(-50%); color: var(--muted); width: 16px; }
 
-    .content { padding: 32px; }
-    .page { display: none; }
-    .page.active { display: block; }
+    #search-input:focus {
+      border-color: var(--accent);
+    }
 
-    /* Buttons */
+    .search-wrap {
+      position: relative;
+    }
+
+    .search-wrap svg {
+      position: absolute;
+      left: 11px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--muted);
+      width: 16px;
+    }
+
+    .content {
+      padding: 32px;
+    }
+
+    .page {
+      display: none;
+    }
+
+    .page.active {
+      display: block;
+    }
+
     .btn {
-      display: inline-flex; align-items: center; gap: 7px;
-      padding: 9px 18px; border-radius: 8px; border: none;
-      font-size: 14px; font-weight: 500; cursor: pointer;
-      transition: all .15s; font-family: inherit;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 9px 18px;
+      border-radius: 8px;
+      border: none;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      font-family: inherit;
     }
-    .btn-primary { background: var(--accent); color: #fff; }
-    .btn-primary:hover { background: #3d7ef5; }
-    .btn-ghost { background: transparent; color: var(--muted); border: 1px solid var(--border); }
-    .btn-ghost:hover { color: var(--text); border-color: var(--text); }
-    .btn-danger { background: rgba(247,79,106,.15); color: var(--danger); border: 1px solid rgba(247,79,106,.3); }
-    .btn-sm { padding: 6px 12px; font-size: 13px; }
 
-    /* Cards */
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    .btn-primary:hover {
+      background: #3d7ef5;
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--muted);
+      border: 1px solid var(--border);
+    }
+
+    .btn-ghost:hover {
+      color: var(--text);
+      border-color: var(--text);
+    }
+
+    .btn-sm {
+      padding: 6px 12px;
+      font-size: 13px;
+    }
+
     .card {
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: 12px; padding: 24px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
     }
 
-    /* Ticket Table */
-    table { width: 100%; border-collapse: collapse; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
     th {
-      text-align: left; padding: 10px 14px;
-      font-size: 11px; font-weight: 600; letter-spacing: .08em;
-      color: var(--muted); text-transform: uppercase;
+      text-align: left;
+      padding: 10px 14px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: .08em;
+      color: var(--muted);
+      text-transform: uppercase;
       border-bottom: 1px solid var(--border);
     }
-    td { padding: 12px 14px; font-size: 14px; border-bottom: 1px solid rgba(37,42,56,.6); vertical-align: middle; }
-    tr:hover td { background: rgba(79,142,247,.04); }
-    tr:last-child td { border-bottom: none; }
-    .ticket-link { color: var(--accent); cursor: pointer; text-decoration: none; }
-    .ticket-link:hover { text-decoration: underline; }
 
-    /* Status badges */
+    td {
+      padding: 12px 14px;
+      font-size: 14px;
+      border-bottom: 1px solid rgba(37, 42, 56, .6);
+      vertical-align: middle;
+    }
+
+    tr:hover td {
+      background: rgba(79, 142, 247, .04);
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    .ticket-link {
+      color: var(--accent);
+      cursor: pointer;
+    }
+
+    .ticket-link:hover {
+      text-decoration: underline;
+    }
+
     .badge {
-      display: inline-block; padding: 3px 10px; border-radius: 20px;
-      font-size: 12px; font-weight: 500; font-family: 'IBM Plex Mono', monospace;
-      white-space: nowrap;
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 500;
     }
-    .badge-open    { background: rgba(79,247,160,.12); color: var(--success); border: 1px solid rgba(79,247,160,.25); }
-    .badge-inprog  { background: rgba(79,142,247,.12); color: var(--accent); border: 1px solid rgba(79,142,247,.25); }
-    .badge-closed  { background: rgba(107,114,128,.12); color: var(--muted); border: 1px solid rgba(107,114,128,.25); }
-    .badge-high    { background: rgba(247,79,106,.12); color: var(--danger); border: 1px solid rgba(247,79,106,.25); }
-    .badge-medium  { background: rgba(247,148,79,.12); color: var(--warn); border: 1px solid rgba(247,148,79,.25); }
-    .badge-low     { background: rgba(107,114,128,.12); color: var(--muted); border: 1px solid rgba(107,114,128,.25); }
 
-    /* Form */
-    .form-group { margin-bottom: 18px; }
-    label { display: block; font-size: 13px; font-weight: 500; color: var(--muted); margin-bottom: 6px; }
-    input[type=text], input[type=email], textarea, select {
-      width: 100%; background: var(--bg); border: 1px solid var(--border);
-      border-radius: 8px; padding: 10px 14px;
-      color: var(--text); font-size: 14px; outline: none;
-      font-family: inherit; transition: border-color .15s;
+    .badge-open {
+      background: rgba(79, 247, 160, .12);
+      color: var(--success);
+      border: 1px solid rgba(79, 247, 160, .25);
     }
-    input:focus, textarea:focus, select:focus { border-color: var(--accent); }
-    textarea { resize: vertical; min-height: 100px; }
-    select option { background: var(--surface); }
-    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
 
-    /* Filter bar */
-    .filter-bar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; align-items: center; }
+    .badge-inprog {
+      background: rgba(79, 142, 247, .12);
+      color: var(--accent);
+      border: 1px solid rgba(79, 142, 247, .25);
+    }
+
+    .badge-closed {
+      background: rgba(107, 114, 128, .12);
+      color: var(--muted);
+      border: 1px solid rgba(107, 114, 128, .25);
+    }
+
+    .badge-high {
+      background: rgba(247, 79, 106, .12);
+      color: var(--danger);
+      border: 1px solid rgba(247, 79, 106, .25);
+    }
+
+    .badge-medium {
+      background: rgba(247, 148, 79, .12);
+      color: var(--warn);
+      border: 1px solid rgba(247, 148, 79, .25);
+    }
+
+    .badge-low {
+      background: rgba(107, 114, 128, .12);
+      color: var(--muted);
+      border: 1px solid rgba(107, 114, 128, .25);
+    }
+
+    .form-group {
+      margin-bottom: 14px;
+    }
+
+    label {
+      font-size: 13px;
+      color: #555;
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    input[type="text"],
+    input[type="email"] {
+      width: 100%;
+      padding: 8px 11px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 14px;
+      color: #333;
+      outline: none;
+      font-family: inherit;
+      background: #fff;
+    }
+
+    textarea {
+      width: 100%;
+      border: 1px solid #ccc;
+      padding: 8px 11px;
+      font-size: 14px;
+      border-radius: 4px;
+      min-height: 100px;
+      resize: vertical;
+      font-family: inherit;
+      color: #333;
+      background: #fff;
+    }
+
+    select {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+      border-radius: 4px;
+      color: #333;
+      background: white;
+      font-family: inherit;
+      outline: none;
+    }
+
+    input:focus,
+    textarea:focus,
+    select:focus {
+      border-color: #3b9edd;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .filter-bar {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+      align-items: center;
+    }
+
     .filter-btn {
-      padding: 6px 14px; border-radius: 20px; border: 1px solid var(--border);
-      background: transparent; color: var(--muted); font-size: 13px;
-      cursor: pointer; transition: all .15s; font-family: inherit;
+      padding: 6px 14px;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--muted);
+      font-size: 13px;
+      cursor: pointer;
+      font-family: inherit;
     }
-    .filter-btn.active, .filter-btn:hover { border-color: var(--accent); color: var(--accent); background: rgba(79,142,247,.08); }
-    .filter-btn.active-open { border-color: var(--success); color: var(--success); background: rgba(79,247,160,.08); }
-    .filter-btn.active-inprog { border-color: var(--accent); color: var(--accent); background: rgba(79,142,247,.08); }
-    .filter-btn.active-closed { border-color: var(--muted); color: var(--muted); background: rgba(107,114,128,.08); }
 
-    /* Ticket Detail */
-    .detail-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px; flex-wrap: wrap; gap: 12px; }
-    .detail-meta { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 8px; }
-    .meta-chip { font-size: 12px; color: var(--muted); font-family: 'IBM Plex Mono', monospace; }
-    .notes-list { display: flex; flex-direction: column; gap: 12px; margin-top: 16px; }
+    .filter-btn.active,
+    .filter-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: rgba(79, 142, 247, .08);
+    }
+
+    .detail-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .detail-meta {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 8px;
+    }
+
+    .detail-meta span {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
     .note-card {
-      background: rgba(79,142,247,.06); border: 1px solid rgba(79,142,247,.15);
-      border-radius: 8px; padding: 12px 16px;
+      background: rgba(79, 142, 247, .06);
+      border: 1px solid rgba(79, 142, 247, .15);
+      border-radius: 8px;
+      padding: 12px 16px;
+      margin-bottom: 10px;
     }
-    .note-author { font-size: 12px; font-weight: 600; color: var(--accent); margin-bottom: 4px; font-family: 'IBM Plex Mono', monospace; }
-    .note-time { font-size: 11px; color: var(--muted); }
-    .note-text { font-size: 14px; margin-top: 6px; line-height: 1.5; }
 
-    /* Stats cards on dashboard */
-    .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 28px; }
+    .note-author {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--accent);
+    }
+
+    .note-time {
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .note-text {
+      font-size: 14px;
+      margin-top: 6px;
+      line-height: 1.5;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+
     .stat-card {
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: 12px; padding: 20px;
-      position: relative; overflow: hidden;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
     }
-    .stat-card::before {
-      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
-    }
-    .stat-card.t { }
-    .stat-card.o::before { background: var(--success); }
-    .stat-card.p::before { background: var(--accent); }
-    .stat-card.c::before { background: var(--muted); }
-    .stat-label { font-size: 11px; color: var(--muted); font-weight: 600; letter-spacing: .08em; text-transform: uppercase; margin-bottom: 8px; }
-    .stat-num { font-family: 'Syne', sans-serif; font-size: 36px; font-weight: 800; }
 
-    /* Toast */
+    .stat-label {
+      font-size: 11px;
+      color: var(--muted);
+      font-weight: 600;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .stat-num {
+      font-family: 'Syne', sans-serif;
+      font-size: 36px;
+      font-weight: 800;
+    }
+
     #toast {
-      position: fixed; bottom: 28px; right: 28px;
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: 10px; padding: 14px 20px;
-      font-size: 14px; z-index: 9999;
-      transform: translateY(80px); opacity: 0;
-      transition: all .3s cubic-bezier(.34,1.56,.64,1);
-      display: flex; align-items: center; gap: 10px;
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: #333;
+      color: #fff;
+      padding: 10px 16px;
+      border-radius: 5px;
+      font-size: 13px;
+      display: none;
+      z-index: 9999;
     }
-    #toast.show { transform: translateY(0); opacity: 1; }
-    #toast.success { border-color: rgba(79,247,160,.4); }
-    #toast.error { border-color: rgba(247,79,106,.4); }
 
-    /* Empty state */
-    .empty { text-align: center; padding: 60px 20px; color: var(--muted); }
-    .empty svg { width: 48px; height: 48px; margin: 0 auto 16px; opacity: .3; }
-    .empty p { font-size: 15px; }
+    #toast.show {
+      display: block;
+    }
 
-    /* Loading skeleton */
-    .skeleton { background: var(--border); border-radius: 4px; animation: pulse 1.5s infinite; }
-    @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: .4; } }
+    #toast.success {
+      background: #16a34a;
+    }
 
-    /* Scrollbar */
-    ::-webkit-scrollbar { width: 6px; height: 6px; }
-    ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+    #toast.error {
+      background: #dc2626;
+    }
 
-    /* Mobile */
+    .empty {
+      text-align: center;
+      padding: 40px;
+      color: #999;
+    }
+
+    .empty p {
+      font-size: 14px;
+    }
+
+    .detail-grid {
+      display: grid;
+      grid-template-columns: 1fr 360px;
+      gap: 24px;
+      align-items: start;
+      max-width: 1100px;
+    }
+
+    .info-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 7px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 13px;
+    }
+
+    .info-row:last-child {
+      border-bottom: none;
+    }
+
+    .info-row .key {
+      color: var(--muted);
+    }
+
+    ::-webkit-scrollbar {
+      width: 5px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #ccc;
+      border-radius: 8px;
+    }
+
     @media (max-width: 768px) {
-      #sidebar { width: 100%; height: 56px; flex-direction: row; border-right: none; border-bottom: 1px solid var(--border); }
-      nav { display: flex; flex-direction: row; padding: 0 8px; overflow-x: auto; }
-      .logo { padding: 0 16px; display: flex; align-items: center; border-bottom: none; border-right: 1px solid var(--border); white-space: nowrap; }
-      .sidebar-stats { display: none; }
-      #main { margin-left: 0; margin-top: 56px; }
-      .stats-grid { grid-template-columns: 1fr 1fr; }
-      .form-row { grid-template-columns: 1fr; }
+      #sidebar {
+        width: 100%;
+        height: auto;
+        flex-direction: row;
+        border-right: none;
+        border-bottom: 1px solid #e2e8f0;
+        flex-wrap: wrap;
+      }
+
+      nav {
+        display: flex;
+        flex-direction: row;
+        overflow-x: auto;
+        padding: 0 6px;
+      }
+
+      .logo {
+        padding: 10px 16px;
+        border-right: 1px solid #e2e8f0;
+        white-space: nowrap;
+      }
+
+      .sidebar-stats {
+        display: none;
+      }
+
+      #main {
+        margin-left: 0;
+        margin-top: 50px;
+      }
+
+      .stats-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+
+      .detail-grid {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
 </head>
+
 <body>
 
-<!-- Sidebar -->
-<aside id="sidebar">
-  <div class="logo">Support<span>Desk</span></div>
-  <nav>
-    <a onclick="showPage('dashboard')" id="nav-dashboard" class="active">
-      <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
-      Dashboard
-    </a>
-    <a onclick="showPage('tickets')" id="nav-tickets">
-      <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
-      All Tickets
-    </a>
-    <a onclick="showPage('create')" id="nav-create">
-      <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M12 4v16m8-8H4"/></svg>
-      New Ticket
-    </a>
-  </nav>
-  <div class="sidebar-stats" style="padding-bottom:16px">
-    <div class="stat-pill"><span>Open</span><span class="num" id="sb-open">—</span></div>
-    <div class="stat-pill"><span>In Progress</span><span class="num" id="sb-inprog">—</span></div>
-    <div class="stat-pill"><span>Closed</span><span class="num" id="sb-closed">—</span></div>
-  </div>
-</aside>
-
-<!-- Main -->
-<main id="main">
-  <header>
-    <div class="search-wrap" style="flex:1;max-width:420px">
-      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-      <input id="search-input" type="text" placeholder="Search tickets, customers, IDs…" oninput="onSearch(this.value)">
-    </div>
-    <button class="btn btn-primary btn-sm" onclick="showPage('create')">
-      <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path d="M12 4v16m8-8H4"/></svg>
-      New Ticket
-    </button>
-  </header>
-
-  <div class="content">
-
-    <!-- Dashboard Page -->
-    <div id="page-dashboard" class="page active">
-      <div style="margin-bottom:24px">
-        <h1 style="font-size:26px;font-weight:800;margin-bottom:4px">Dashboard</h1>
-        <p style="color:var(--muted);font-size:14px">Overview of your support queue</p>
+  <aside id="sidebar">
+    <div class="logo">Support<span>Desk</span></div>
+    <nav>
+      <a onclick="showPage('dashboard')" id="nav-dashboard" class="active">
+        &#128200; Dashboard
+      </a>
+      <a onclick="showPage('tickets')" id="nav-tickets">
+        &#128203; All Tickets
+      </a>
+      <a onclick="showPage('create')" id="nav-create">
+        &#10133; New Ticket
+      </a>
+    </nav>
+    <div class="sidebar-stats">
+      <div class="stat-pill">
+        <span>Open</span>
+        <span id="sb-open">0</span>
       </div>
-      <div class="stats-grid">
-        <div class="stat-card t">
-          <div class="stat-label">Total Tickets</div>
-          <div class="stat-num" id="stat-total">—</div>
-        </div>
-        <div class="stat-card o">
-          <div class="stat-label">Open</div>
-          <div class="stat-num" style="color:var(--success)" id="stat-open">—</div>
-        </div>
-        <div class="stat-card p">
-          <div class="stat-label">In Progress</div>
-          <div class="stat-num" style="color:var(--accent)" id="stat-inprog">—</div>
-        </div>
-        <div class="stat-card c">
-          <div class="stat-label">Closed</div>
-          <div class="stat-num" style="color:var(--muted)" id="stat-closed">—</div>
-        </div>
+      <div class="stat-pill">
+        <span>In Progress</span>
+        <span id="sb-inprog">0</span>
       </div>
-      <div class="card">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
-          <h2 style="font-size:16px;font-weight:700">Recent Tickets</h2>
-          <a onclick="showPage('tickets')" style="color:var(--accent);font-size:13px;cursor:pointer">View all →</a>
-        </div>
-        <div id="recent-tickets-list">
-          <div style="color:var(--muted);font-size:14px;padding:20px 0">Loading…</div>
-        </div>
+      <div class="stat-pill">
+        <span>Closed</span>
+        <span id="sb-closed">0</span>
       </div>
     </div>
+  </aside>
 
-    <!-- All Tickets Page -->
-    <div id="page-tickets" class="page">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:12px">
-        <h1 style="font-size:26px;font-weight:800">All Tickets</h1>
+  <main id="main">
+    <header>
+      <div class="search-wrap" style="flex:1;max-width:420px">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8" />
+          <path d="m21 21-4.35-4.35" />
+        </svg>
+        <input id="search-input" type="text" placeholder="Search tickets, customers, IDs..."
+          oninput="onSearch(this.value)">
       </div>
-      <div class="filter-bar">
-        <span style="font-size:13px;color:var(--muted);margin-right:4px">Filter:</span>
-        <button class="filter-btn active" onclick="setFilter('')" id="f-all">All</button>
-        <button class="filter-btn" onclick="setFilter('Open')" id="f-open">Open</button>
-        <button class="filter-btn" onclick="setFilter('In Progress')" id="f-inprog">In Progress</button>
-        <button class="filter-btn" onclick="setFilter('Closed')" id="f-closed">Closed</button>
-        <span style="margin-left:auto;font-size:12px;color:var(--muted)" id="ticket-count"></span>
-      </div>
-      <div class="card" style="padding:0;overflow:hidden">
-        <div id="tickets-table-wrap">
-          <div style="color:var(--muted);font-size:14px;padding:40px;text-align:center">Loading…</div>
+      <button class="btn btn-primary btn-sm" onclick="showPage('create')">+ New Ticket</button>
+    </header>
+
+    <div class="content">
+
+      <!-- Dashboard -->
+      <div id="page-dashboard" class="page active">
+        <div style="margin-bottom:20px">
+          <h1 style="font-size:24px;font-weight:700;margin-bottom:4px">Dashboard</h1>
+          <p style="color:#94a3b8;font-size:14px">Overview of your support tickets</p>
         </div>
-      </div>
-    </div>
-
-    <!-- Create Ticket Page -->
-    <div id="page-create" class="page">
-      <div style="max-width:640px">
-        <div style="margin-bottom:24px">
-          <h1 style="font-size:26px;font-weight:800;margin-bottom:4px">New Ticket</h1>
-          <p style="color:var(--muted);font-size:14px">Fill in the customer's details and issue</p>
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-label">Total Tickets</div>
+            <div class="stat-num" id="stat-total">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Open</div>
+            <div class="stat-num" id="stat-open" style="color:#4ff7a0">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">In Progress</div>
+            <div class="stat-num" id="stat-inprog" style="color:#4f8ef7">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Closed</div>
+            <div class="stat-num" id="stat-closed" style="color:#6b7280">0</div>
+          </div>
         </div>
         <div class="card">
-          <div class="form-row">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+            <h2 style="font-size:15px;font-weight:600">Recent Tickets</h2>
+            <a onclick="showPage('tickets')" style="color:#0ea5e9;font-size:13px;cursor:pointer">View all</a>
+          </div>
+          <div id="recent-tickets-list">
+            <p style="color:#94a3b8;font-size:14px;padding:16px 0">Loading...</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- All Tickets -->
+      <div id="page-tickets" class="page">
+        <div style="margin-bottom:18px">
+          <h1 style="font-size:22px;font-weight:600">All Tickets</h1>
+        </div>
+        <div class="filter-bar">
+          <span style="font-size:13px;color:#64748b">Filter by:</span>
+          <button class="filter-btn active" onclick="setFilter('')" id="f-all">All</button>
+          <button class="filter-btn" onclick="setFilter('Open')" id="f-open">Open</button>
+          <button class="filter-btn" onclick="setFilter('In Progress')" id="f-inprog">In Progress</button>
+          <button class="filter-btn" onclick="setFilter('Closed')" id="f-closed">Closed</button>
+          <span id="ticket-count" style="font-size:12px;color:#94a3b8;margin-left:auto"></span>
+        </div>
+        <div class="card" style="padding:0;overflow:hidden">
+          <div id="tickets-table-wrap">
+            <p style="color:#94a3b8;font-size:14px;padding:30px;text-align:center">Loading...</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Create Ticket -->
+      <div id="page-create" class="page">
+        <div style="max-width:620px">
+          <div style="margin-bottom:20px">
+            <h1 style="font-size:22px;font-weight:600">Create New Ticket</h1>
+            <p style="color:#64748b;font-size:13px;margin-top:4px">Enter the customer details and describe the issue</p>
+          </div>
+          <div class="card">
+            <div class="form-row">
+              <div class="form-group">
+                <label>Customer Name *</label>
+                <input type="text" id="f-name" placeholder="e.g. Ritik Jha">
+              </div>
+              <div class="form-group">
+                <label>Email *</label>
+                <input type="email" id="f-email" placeholder="ritikjha@example.com">
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Priority</label>
+                <select id="f-priority">
+                  <option value="Low">Low</option>
+                  <option value="Medium" selected>Medium</option>
+                  <option value="High">High</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <!-- empty col -->
+              </div>
+            </div>
             <div class="form-group">
-              <label>Customer Name *</label>
-              <input type="text" id="f-name" placeholder="Jane Doe">
+              <label>Subject *</label>
+              <input type="text" id="f-subject" placeholder="What is the issue about?">
             </div>
             <div class="form-group">
-              <label>Customer Email *</label>
-              <input type="email" id="f-email" placeholder="jane@example.com">
+              <label>Description *</label>
+              <textarea id="f-desc" rows="4" placeholder="Please describe the issue in detail..."></textarea>
             </div>
-          </div>
-          <div class="form-row">
-            <div class="form-group">
-              <label>Priority</label>
-              <select id="f-priority">
-                <option value="Low">Low</option>
-                <option value="Medium" selected>Medium</option>
-                <option value="High">High</option>
-              </select>
+            <div style="display:flex;gap:8px;margin-top:10px">
+              <button class="btn btn-primary" onclick="submitTicket()">Submit Ticket</button>
+              <button class="btn btn-ghost" onclick="showPage('tickets')">Cancel</button>
             </div>
-            <div class="form-group" style="display:flex;align-items:flex-end">
-              <!-- spacer -->
-            </div>
-          </div>
-          <div class="form-group">
-            <label>Subject *</label>
-            <input type="text" id="f-subject" placeholder="Brief summary of the issue">
-          </div>
-          <div class="form-group">
-            <label>Description *</label>
-            <textarea id="f-desc" rows="4" placeholder="Describe the issue in detail…"></textarea>
-          </div>
-          <div style="display:flex;gap:10px;margin-top:4px">
-            <button class="btn btn-primary" onclick="submitTicket()">
-              <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path d="M12 4v16m8-8H4"/></svg>
-              Create Ticket
-            </button>
-            <button class="btn btn-ghost" onclick="showPage('tickets')">Cancel</button>
           </div>
         </div>
       </div>
+
+      <!-- Ticket Detail -->
+      <div id="page-detail" class="page">
+        <button class="btn btn-ghost btn-sm" onclick="showPage('tickets')" style="margin-bottom:20px">
+          &larr; Back to tickets
+        </button>
+        <div id="detail-content">
+          <p style="color:var(--muted)">Loading...</p>
+        </div>
+      </div>
+
     </div>
+  </main>
 
-    <!-- Ticket Detail Page -->
-    <div id="page-detail" class="page">
-      <button class="btn btn-ghost btn-sm" onclick="showPage('tickets')" style="margin-bottom:20px">
-        ← Back to tickets
-      </button>
-      <div id="detail-content">
-        <div style="color:var(--muted);font-size:14px">Loading…</div>
-      </div>
-    </div>
+  <div id="toast"></div>
 
-  </div>
-</main>
+  <script>
+    var currentFilter = '';
+    var searchQuery = '';
+    var searchTimer;
 
-<!-- Toast -->
-<div id="toast"></div>
+    function showPage(page) {
+      var pages = document.querySelectorAll('.page');
+      for (var i = 0; i < pages.length; i++) {
+        pages[i].classList.remove('active');
+      }
 
-<script>
-const API = '';  // same origin
-let currentFilter = '';
-let searchQuery = '';
-let searchTimer;
+      var links = document.querySelectorAll('nav a');
+      for (var i = 0; i < links.length; i++) {
+        links[i].classList.remove('active');
+      }
 
-// ── Navigation ────────────────────────────────────────────────────────────────
-function showPage(page) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
-  document.getElementById('page-' + page).classList.add('active');
-  document.getElementById('nav-' + (page === 'detail' ? 'tickets' : page))?.classList.add('active');
-  if (page === 'dashboard') loadDashboard();
-  if (page === 'tickets') loadTickets();
-}
+      document.getElementById('page-' + page).classList.add('active');
 
-// ── Search ────────────────────────────────────────────────────────────────────
-function onSearch(val) {
-  searchQuery = val;
-  clearTimeout(searchTimer);
-  searchTimer = setTimeout(() => {
-    if (document.getElementById('page-tickets').classList.contains('active')) loadTickets();
-  }, 280);
-}
+      var navId = page == 'detail' ? 'tickets' : page;
+      var navEl = document.getElementById('nav-' + navId);
+      if (navEl) {
+        navEl.classList.add('active');
+      }
 
-// ── Stats ─────────────────────────────────────────────────────────────────────
-async function loadStats() {
-  const r = await fetch(`${API}/api/stats`);
-  const d = await r.json();
-  ['total','open','in_progress','closed'].forEach(k => {
-    const el = document.getElementById('stat-' + k.replace('_',''));
-    if (el) el.textContent = d[k] ?? 0;
-  });
-  const sbOpen = document.getElementById('sb-open');
-  const sbInprog = document.getElementById('sb-inprog');
-  const sbClosed = document.getElementById('sb-closed');
-  if (sbOpen) sbOpen.textContent = d.open;
-  if (sbInprog) sbInprog.textContent = d.in_progress;
-  if (sbClosed) sbClosed.textContent = d.closed;
-  return d;
-}
+      if (page == 'dashboard') {
+        loadDashboard();
+      }
+      if (page == 'tickets') {
+        loadTickets();
+      }
+    }
 
-// ── Dashboard ─────────────────────────────────────────────────────────────────
-async function loadDashboard() {
-  loadStats();
-  const r = await fetch(`${API}/api/tickets`);
-  const tickets = await r.json();
-  const recent = tickets.slice(0, 8);
-  const el = document.getElementById('recent-tickets-list');
-  if (!recent.length) { el.innerHTML = emptyHTML('No tickets yet. Create your first one!'); return; }
-  el.innerHTML = renderTable(recent, false);
-}
+    function onSearch(val) {
+      searchQuery = val;
+      clearTimeout(searchTimer);
+      searchTimer = setTimeout(function () {
+        var pg = document.getElementById('page-tickets');
+        if (pg.classList.contains('active')) {
+          loadTickets();
+        }
+      }, 300);
+    }
 
-// ── Tickets ───────────────────────────────────────────────────────────────────
-function setFilter(f) {
-  currentFilter = f;
-  document.querySelectorAll('.filter-btn').forEach(b => {
-    b.classList.remove('active','active-open','active-inprog','active-closed');
-  });
-  const map = { '': 'all', 'Open': 'open', 'In Progress': 'inprog', 'Closed': 'closed' };
-  const btn = document.getElementById('f-' + (map[f] || 'all'));
-  if (btn) btn.classList.add('active');
-  loadTickets();
-}
+    function loadStats() {
+      fetch('/api/stats')
+        .then(function (res) { return res.json(); })
+        .then(function (d) {
+          document.getElementById('stat-total').textContent = d.total || 0;
+          document.getElementById('stat-open').textContent = d.open || 0;
+          document.getElementById('stat-inprog').textContent = d.in_progress || 0;
+          document.getElementById('stat-closed').textContent = d.closed || 0;
+          document.getElementById('sb-open').textContent = d.open || 0;
+          document.getElementById('sb-inprog').textContent = d.in_progress || 0;
+          document.getElementById('sb-closed').textContent = d.closed || 0;
+        });
+    }
 
-async function loadTickets() {
-  const wrap = document.getElementById('tickets-table-wrap');
-  wrap.innerHTML = '<div style="color:var(--muted);font-size:14px;padding:40px;text-align:center">Loading…</div>';
-  let url = `${API}/api/tickets?`;
-  if (currentFilter) url += `status=${encodeURIComponent(currentFilter)}&`;
-  if (searchQuery) url += `search=${encodeURIComponent(searchQuery)}&`;
-  const r = await fetch(url);
-  const tickets = await r.json();
-  const count = document.getElementById('ticket-count');
-  if (count) count.textContent = tickets.length + ' ticket' + (tickets.length !== 1 ? 's' : '');
-  if (!tickets.length) { wrap.innerHTML = emptyHTML('No tickets found'); return; }
-  wrap.innerHTML = renderTable(tickets, true);
-}
+    function loadDashboard() {
+      loadStats();
+      fetch('/api/tickets')
+        .then(function (res) { return res.json(); })
+        .then(function (tickets) {
+          var recent = tickets.slice(0, 8);
+          var el = document.getElementById('recent-tickets-list');
+          if (recent.length == 0) {
+            el.innerHTML = emptyHTML('No tickets yet. Create your first one!');
+            return;
+          }
+          el.innerHTML = renderTable(recent, false);
+        });
+    }
 
-// ── Table renderer ─────────────────────────────────────────────────────────────
-function renderTable(tickets, showEmail) {
-  return `<table>
-    <thead><tr>
-      <th>Ticket ID</th>
-      <th>Customer</th>
-      ${showEmail ? '<th>Email</th>' : ''}
-      <th>Subject</th>
-      <th>Priority</th>
-      <th>Status</th>
-      <th>Created</th>
-    </tr></thead>
-    <tbody>
-      ${tickets.map(t => `<tr>
-        <td><span class="mono ticket-link" onclick="loadDetail('${t.ticket_id}')">${t.ticket_id}</span></td>
-        <td>${esc(t.customer_name)}</td>
-        ${showEmail ? `<td style="color:var(--muted);font-size:13px">${esc(t.customer_email)}</td>` : ''}
-        <td style="max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(t.subject)}</td>
-        <td>${priorityBadge(t.priority)}</td>
-        <td>${statusBadge(t.status)}</td>
-        <td class="mono" style="font-size:12px;color:var(--muted)">${fmtDate(t.created_at)}</td>
-      </tr>`).join('')}
-    </tbody>
-  </table>`;
-}
+    function setFilter(f) {
+      currentFilter = f;
 
-// ── Detail ─────────────────────────────────────────────────────────────────────
-async function loadDetail(ticketId) {
-  showPage('detail');
-  const el = document.getElementById('detail-content');
-  el.innerHTML = '<div style="color:var(--muted)">Loading…</div>';
-  const r = await fetch(`${API}/api/tickets/${ticketId}`);
-  if (!r.ok) { el.innerHTML = '<div style="color:var(--danger)">Ticket not found.</div>'; return; }
-  const t = await r.json();
-  el.innerHTML = `
-    <div style="display:grid;grid-template-columns:1fr 360px;gap:24px;align-items:start;max-width:1100px" class="detail-grid">
-      <!-- Left -->
-      <div>
-        <div class="detail-header">
-          <div>
-            <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:6px">
-              <span class="mono" style="color:var(--accent);font-size:15px">${t.ticket_id}</span>
-              ${statusBadge(t.status)}
-              ${priorityBadge(t.priority)}
-            </div>
-            <h2 style="font-size:22px;font-weight:700">${esc(t.subject)}</h2>
-            <div class="detail-meta">
-              <span class="meta-chip">👤 ${esc(t.customer_name)}</span>
-              <span class="meta-chip">✉️ ${esc(t.customer_email)}</span>
-              <span class="meta-chip">📅 ${fmtDate(t.created_at)}</span>
-            </div>
-          </div>
-        </div>
-        <div class="card" style="margin-bottom:24px">
-          <p style="font-size:13px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px">Description</p>
-          <p style="line-height:1.7;font-size:15px;white-space:pre-wrap">${esc(t.description)}</p>
-        </div>
+      var btns = document.querySelectorAll('.filter-btn');
+      for (var i = 0; i < btns.length; i++) {
+        btns[i].classList.remove('active');
+      }
 
-        <!-- Notes -->
-        <div class="card">
-          <p style="font-size:13px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px">Activity & Notes</p>
-          <div class="notes-list" id="notes-list">
-            ${t.notes && t.notes.length ? t.notes.map(n => noteHTML(n)).join('') : '<p style="color:var(--muted);font-size:14px">No notes yet.</p>'}
-          </div>
-          <div style="margin-top:20px;border-top:1px solid var(--border);padding-top:16px">
-            <label style="font-size:13px;font-weight:500;color:var(--muted);display:block;margin-bottom:6px">Add a note</label>
-            <textarea id="note-input" rows="3" placeholder="Type your note…" style="margin-bottom:10px"></textarea>
-            <div style="display:flex;gap:8px">
-              <input type="text" id="note-author" placeholder="Your name" style="max-width:180px">
-              <button class="btn btn-primary btn-sm" onclick="addNote('${t.ticket_id}')">Add Note</button>
-            </div>
-          </div>
-        </div>
-      </div>
+      if (f == '') {
+        document.getElementById('f-all').classList.add('active');
+      } else if (f == 'Open') {
+        document.getElementById('f-open').classList.add('active');
+      } else if (f == 'In Progress') {
+        document.getElementById('f-inprog').classList.add('active');
+      } else if (f == 'Closed') {
+        document.getElementById('f-closed').classList.add('active');
+      }
 
-      <!-- Right panel -->
-      <div>
-        <div class="card">
-          <p style="font-size:13px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:14px">Update Status</p>
-          <select id="status-select" style="margin-bottom:12px">
-            <option ${t.status==='Open'?'selected':''}>Open</option>
-            <option ${t.status==='In Progress'?'selected':''}>In Progress</option>
-            <option ${t.status==='Closed'?'selected':''}>Closed</option>
-          </select>
-          <button class="btn btn-primary" style="width:100%" onclick="updateStatus('${t.ticket_id}')">Save Status</button>
-        </div>
+      loadTickets();
+    }
 
-        <div class="card" style="margin-top:16px">
-          <p style="font-size:13px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px">Ticket Info</p>
-          <div style="font-size:13px;line-height:2;color:var(--muted)">
-            <div>ID <span class="mono" style="color:var(--text);float:right">${t.ticket_id}</span></div>
-            <div>Priority <span style="float:right">${priorityBadge(t.priority)}</span></div>
-            <div>Created <span class="mono" style="color:var(--text);float:right">${fmtDate(t.created_at)}</span></div>
-            <div>Updated <span class="mono" style="color:var(--text);float:right">${fmtDate(t.updated_at)}</span></div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <style>
-      @media(max-width:768px){ .detail-grid{grid-template-columns:1fr!important} }
-    </style>
-  `;
-}
+    function loadTickets() {
+      var wrap = document.getElementById('tickets-table-wrap');
+      wrap.innerHTML = '<p style="color:#94a3b8;font-size:14px;padding:30px;text-align:center">Loading...</p>';
 
-async function updateStatus(ticketId) {
-  const status = document.getElementById('status-select').value;
-  const r = await fetch(`${API}/api/tickets/${ticketId}`, {
-    method: 'PUT', headers: {'Content-Type':'application/json'},
-    body: JSON.stringify({ status })
-  });
-  if (r.ok) { toast('Status updated', 'success'); loadDetail(ticketId); loadStats(); }
-  else toast('Error updating status', 'error');
-}
+      var url = '/api/tickets?';
+      if (currentFilter) {
+        url += 'status=' + encodeURIComponent(currentFilter) + '&';
+      }
+      if (searchQuery) {
+        url += 'search=' + encodeURIComponent(searchQuery) + '&';
+      }
 
-async function addNote(ticketId) {
-  const note = document.getElementById('note-input').value.trim();
-  const author = document.getElementById('note-author').value.trim() || 'Agent';
-  if (!note) { toast('Note cannot be empty', 'error'); return; }
-  const r = await fetch(`${API}/api/tickets/${ticketId}`, {
-    method: 'PUT', headers: {'Content-Type':'application/json'},
-    body: JSON.stringify({ note, author })
-  });
-  if (r.ok) { toast('Note added', 'success'); loadDetail(ticketId); }
-  else toast('Error adding note', 'error');
-}
+      fetch(url)
+        .then(function (res) { return res.json(); })
+        .then(function (tickets) {
+          var count = document.getElementById('ticket-count');
+          if (count) {
+            count.textContent = tickets.length + ' ticket' + (tickets.length != 1 ? 's' : '');
+          }
+          if (tickets.length == 0) {
+            wrap.innerHTML = emptyHTML('No tickets found');
+            return;
+          }
+          wrap.innerHTML = renderTable(tickets, true);
+        });
+    }
 
-// ── Create ─────────────────────────────────────────────────────────────────────
-async function submitTicket() {
-  const name = document.getElementById('f-name').value.trim();
-  const email = document.getElementById('f-email').value.trim();
-  const subject = document.getElementById('f-subject').value.trim();
-  const desc = document.getElementById('f-desc').value.trim();
-  const priority = document.getElementById('f-priority').value;
-  if (!name || !email || !subject || !desc) { toast('Please fill all required fields', 'error'); return; }
-  const r = await fetch(`${API}/api/tickets`, {
-    method: 'POST', headers: {'Content-Type':'application/json'},
-    body: JSON.stringify({ customer_name: name, customer_email: email, subject, description: desc, priority })
-  });
-  if (r.ok) {
-    const d = await r.json();
-    toast(`Ticket ${d.ticket_id} created!`, 'success');
-    ['f-name','f-email','f-subject','f-desc'].forEach(id => document.getElementById(id).value = '');
-    document.getElementById('f-priority').value = 'Medium';
+    function renderTable(tickets, showEmail) {
+      var rows = '';
+
+      for (var i = 0; i < tickets.length; i++) {
+        var t = tickets[i];
+        var row = '<tr>';
+        row += '<td><span class="ticket-link" onclick="loadDetail(\'' + t.ticket_id + '\')">' + t.ticket_id + '</span></td>';
+        row += '<td>' + esc(t.customer_name) + '</td>';
+        if (showEmail) {
+          row += '<td style="color:#6b7280">' + esc(t.customer_email) + '</td>';
+        }
+        row += '<td>' + esc(t.subject) + '</td>';
+        row += '<td>' + priorityBadge(t.priority) + '</td>';
+        row += '<td>' + statusBadge(t.status) + '</td>';
+        row += '<td style="color:#6b7280;font-size:12px">' + fmtDate(t.created_at) + '</td>';
+        row += '</tr>';
+        rows += row;
+      }
+
+      var emailHeader = showEmail ? '<th>Email</th>' : '';
+
+      var table = '<table>';
+      table += '<thead><tr>';
+      table += '<th>Ticket ID</th>';
+      table += '<th>Customer</th>';
+      table += emailHeader;
+      table += '<th>Subject</th>';
+      table += '<th>Priority</th>';
+      table += '<th>Status</th>';
+      table += '<th>Created</th>';
+      table += '</tr></thead>';
+      table += '<tbody>' + rows + '</tbody>';
+      table += '</table>';
+
+      return table;
+    }
+
+    function loadDetail(ticketId) {
+      showPage('detail');
+      var el = document.getElementById('detail-content');
+      el.innerHTML = '<p style="color:var(--muted)">Loading...</p>';
+
+      fetch('/api/tickets/' + ticketId)
+        .then(function (res) { return res.json(); })
+        .then(function (t) {
+
+          var notesHtml = '';
+          if (t.notes && t.notes.length > 0) {
+            for (var i = 0; i < t.notes.length; i++) {
+              notesHtml += noteHTML(t.notes[i]);
+            }
+          } else {
+            notesHtml = '<p style="color:#94a3b8;font-size:13px">No notes added yet.</p>';
+          }
+
+          var selectedOpen = t.status == 'Open' ? 'selected' : '';
+          var selectedInprog = t.status == 'In Progress' ? 'selected' : '';
+          var selectedClosed = t.status == 'Closed' ? 'selected' : '';
+
+          var html = '<div class="detail-grid">';
+
+          // left column
+          html += '<div>';
+          html += '<div class="detail-header">';
+          html += '<div>';
+          html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">';
+          html += '<span style="color:#4f8ef7;font-size:14px">' + t.ticket_id + '</span>';
+          html += statusBadge(t.status);
+          html += priorityBadge(t.priority);
+          html += '</div>';
+          html += '<h2 style="font-size:20px;font-weight:600">' + esc(t.subject) + '</h2>';
+          html += '<div class="detail-meta">';
+          html += '<span>&#128100; ' + esc(t.customer_name) + '</span>';
+          html += '<span>&#9993; ' + esc(t.customer_email) + '</span>';
+          html += '<span>&#128197; ' + fmtDate(t.created_at) + '</span>';
+          html += '</div>';
+          html += '</div>';
+          html += '</div>';
+
+          html += '<div class="card" style="margin-bottom:20px">';
+          html += '<p style="font-size:13px;font-weight:600;color:#64748b;margin-bottom:8px">Description</p>';
+          html += '<p style="font-size:14px;line-height:1.6;white-space:pre-wrap">' + esc(t.description) + '</p>';
+          html += '</div>';
+
+          html += '<div class="card">';
+          html += '<p style="font-size:13px;font-weight:500;color:#64748b;margin-bottom:10px">Notes & Activity</p>';
+          html += '<div id="notes-list">' + notesHtml + '</div>';
+          html += '<div style="margin-top:15px;padding-top:12px;border-top:1px solid #252a38">';
+          html += '<label style="font-size:13px;color:#555;display:block;margin-bottom:5px">Add a note</label>';
+          html += '<textarea id="note-input" rows="3" placeholder="Write something..." style="margin-bottom:8px;width:100%"></textarea>';
+          html += '<div style="display:flex;gap:6px">';
+          html += '<input type="text" id="note-author" placeholder="Your name" style="max-width:150px">';
+          html += '<button class="btn btn-primary btn-sm" onclick="addNote(\'' + t.ticket_id + '\')">Add Note</button>';
+          html += '</div>';
+          html += '</div>';
+          html += '</div>';
+          html += '</div>';
+
+          // right column
+          html += '<div>';
+          html += '<div class="card">';
+          html += '<p style="font-size:13px;font-weight:600;color:#64748b;margin-bottom:12px">Update Status</p>';
+          html += '<select id="status-select" style="margin-bottom:12px">';
+          html += '<option ' + selectedOpen + '>Open</option>';
+          html += '<option ' + selectedInprog + '>In Progress</option>';
+          html += '<option ' + selectedClosed + '>Closed</option>';
+          html += '</select>';
+          html += '<button class="btn btn-primary" style="width:100%" onclick="updateStatus(\'' + t.ticket_id + '\')">Save Status</button>';
+          html += '</div>';
+
+          html += '<div class="card" style="margin-top:16px">';
+          html += '<p style="font-size:13px;font-weight:600;color:#64748b;margin-bottom:10px">Ticket Info</p>';
+          html += '<div class="info-row"><span class="key">ID</span><span style="font-size:12px">' + t.ticket_id + '</span></div>';
+          html += '<div class="info-row"><span class="key">Priority</span><span>' + priorityBadge(t.priority) + '</span></div>';
+          html += '<div class="info-row"><span class="key">Created</span><span style="font-size:12px">' + fmtDate(t.created_at) + '</span></div>';
+          html += '<div class="info-row"><span class="key">Updated</span><span style="font-size:12px">' + fmtDate(t.updated_at) + '</span></div>';
+          html += '</div>';
+          html += '</div>';
+
+          html += '</div>';
+
+          el.innerHTML = html;
+        });
+    }
+
+    function updateStatus(ticketId) {
+      var status = document.getElementById('status-select').value;
+      fetch('/api/tickets/' + ticketId, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: status })
+      })
+        .then(function (res) {
+          if (res.ok) {
+            toast('Status updated', 'success');
+            loadDetail(ticketId);
+            loadStats();
+          } else {
+            toast('Error updating status', 'error');
+          }
+        });
+    }
+
+    function addNote(ticketId) {
+      var note = document.getElementById('note-input').value.trim();
+      var author = document.getElementById('note-author').value.trim();
+      if (!author) author = 'Agent';
+      if (!note) {
+        toast('Note cannot be empty', 'error');
+        return;
+      }
+      fetch('/api/tickets/' + ticketId, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ note: note, author: author })
+      })
+        .then(function (res) {
+          if (res.ok) {
+            toast('Note added', 'success');
+            loadDetail(ticketId);
+          } else {
+            toast('Error adding note', 'error');
+          }
+        });
+    }
+
+    function submitTicket() {
+      var name = document.getElementById('f-name').value.trim();
+      var email = document.getElementById('f-email').value.trim();
+      var subject = document.getElementById('f-subject').value.trim();
+      var desc = document.getElementById('f-desc').value.trim();
+      var priority = document.getElementById('f-priority').value;
+
+      if (!name || !email || !subject || !desc) {
+        toast('Please fill all required fields', 'error');
+        return;
+      }
+
+      fetch('/api/tickets', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          customer_name: name,
+          customer_email: email,
+          subject: subject,
+          description: desc,
+          priority: priority
+        })
+      })
+        .then(function (res) { return res.json(); })
+        .then(function (d) {
+          toast('Ticket ' + d.ticket_id + ' created!', 'success');
+          document.getElementById('f-name').value = '';
+          document.getElementById('f-email').value = '';
+          document.getElementById('f-subject').value = '';
+          document.getElementById('f-desc').value = '';
+          document.getElementById('f-priority').value = 'Medium';
+          loadStats();
+          setTimeout(function () {
+            loadDetail(d.ticket_id);
+          }, 500);
+        })
+        .catch(function () {
+          toast('Error creating ticket', 'error');
+        });
+    }
+
+    function statusBadge(s) {
+      var cls = 'badge-closed';
+      if (s == 'Open') {
+        cls = 'badge-open';
+      } else if (s == 'In Progress') {
+        cls = 'badge-inprog';
+      }
+      return '<span class="badge ' + cls + '">' + s + '</span>';
+    }
+
+    function priorityBadge(p) {
+      if (!p) p = 'Medium';
+      var cls = 'badge-low';
+      if (p == 'High') {
+        cls = 'badge-high';
+      } else if (p == 'Medium') {
+        cls = 'badge-medium';
+      }
+      return '<span class="badge ' + cls + '">' + p + '</span>';
+    }
+
+    function fmtDate(iso) {
+      if (!iso) return '-';
+      var d = new Date(iso);
+      return d.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+    }
+
+    function esc(s) {
+      if (!s) return '';
+      var result = s.replace(/&/g, '&amp;');
+      result = result.replace(/</g, '&lt;');
+      result = result.replace(/>/g, '&gt;');
+      result = result.replace(/"/g, '&quot;');
+      return result;
+    }
+
+    function emptyHTML(msg) {
+      return '<div class="empty"><p>' + msg + '</p></div>';
+    }
+
+    function noteHTML(n) {
+      var html = '<div class="note-card">';
+      html += '<div style="display:flex;justify-content:space-between;margin-bottom:5px">';
+      html += '<span class="note-author">' + esc(n.author) + '</span>';
+      html += '<span class="note-time">' + fmtDate(n.created_at) + '</span>';
+      html += '</div>';
+      html += '<p class="note-text">' + esc(n.note_text) + '</p>';
+      html += '</div>';
+      return html;
+    }
+
+    var toastTimer;
+
+    function toast(msg, type) {
+      if (!type) type = 'success';
+      var el = document.getElementById('toast');
+      if (type == 'success') {
+        el.textContent = '✓ ' + msg;
+      } else {
+        el.textContent = '✕ ' + msg;
+      }
+      el.className = 'show ' + type;
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(function () {
+        el.className = '';
+      }, 3000);
+    }
+
+    loadDashboard();
     loadStats();
-    setTimeout(() => loadDetail(d.ticket_id), 500);
-  } else {
-    toast('Error creating ticket', 'error');
-  }
-}
-
-// ── Helpers ────────────────────────────────────────────────────────────────────
-function statusBadge(s) {
-  const cls = s==='Open'?'badge-open':s==='In Progress'?'badge-inprog':'badge-closed';
-  return `<span class="badge ${cls}">${s}</span>`;
-}
-function priorityBadge(p) {
-  const cls = p==='High'?'badge-high':p==='Medium'?'badge-medium':'badge-low';
-  return `<span class="badge ${cls}">${p||'Medium'}</span>`;
-}
-function fmtDate(iso) {
-  if (!iso) return '—';
-  const d = new Date(iso);
-  return d.toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' });
-}
-function esc(s) {
-  if (!s) return '';
-  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
-function emptyHTML(msg) {
-  return `<div class="empty">
-    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
-    <p>${msg}</p>
-  </div>`;
-}
-function noteHTML(n) {
-  return `<div class="note-card">
-    <div style="display:flex;justify-content:space-between;align-items:center">
-      <span class="note-author">${esc(n.author)}</span>
-      <span class="note-time mono">${fmtDate(n.created_at)}</span>
-    </div>
-    <p class="note-text">${esc(n.note_text)}</p>
-  </div>`;
-}
-
-let toastTimer;
-function toast(msg, type='success') {
-  const el = document.getElementById('toast');
-  el.textContent = (type==='success'?'✓ ':'✕ ') + msg;
-  el.className = `show ${type}`;
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => el.className = '', 3000);
-}
-
-// ── Init ───────────────────────────────────────────────────────────────────────
-loadDashboard();
-loadStats();
-</script>
+  </script>
 </body>
+
 </html>
